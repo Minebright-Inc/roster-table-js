@@ -80,7 +80,7 @@ function getWorgroupUsers(users){
   http.onload = function () {
     if (this.readyState == 4 && this.status == 200) {
       var response = JSON.parse(this.responseText);
-      if (response.data != null) {
+      if (response.data !== null) {
         workgroup_mates = response.data;
         console.log(response.data);
       } else {
@@ -149,14 +149,14 @@ function getPotentialEventsJSON(user_id, event_id, new_start, is_projected, is_r
     if (this.readyState == 4 && this.status == 200) {
       var response = JSON.parse(this.responseText);
       deleteNotification();
-      if (response.data['success'] != null && response.data['success'] == false) {
+      if (response.data['success'] !== null && response.data['success'] == false) {
         // createNotification(response.data['message'], response.data['type']);
         console.log(response.data);
       }
       potential_events = response.data['events'];
       potential_days_owed = response.data['days_owed'];
       var e = document.getElementById("request_roster_project_personal_roster");
-      if (e != null) {
+      if (e !== null) {
         e.checked = response.data['is_projected'];
       }
       console.log(response.data);
@@ -189,7 +189,7 @@ function postRosterChangeRequest(user_id, event_id, new_start, is_projected, fro
     if (this.readyState == 4 && this.status == 200) {
       var response = JSON.parse(this.responseText);
       deleteNotification();
-      if (response['success'] != null && response['success'] == false) {
+      if (response['success'] !== null && response['success'] == false) {
         createNotification(response['message'], response['type']);
         console.log(response);
       } else {
@@ -239,7 +239,7 @@ function postNewEventRequest(user_id_clicked,
             arrival_date: arrival_date},
         success: function(response) {
             deleteNotification();
-            if (response.success != null && response.success == false) {
+            if (response.success !== null && response.success == false) {
                 createNotification(response.message, response.type);
                 console.log(response);
             } else {
@@ -261,7 +261,7 @@ function DeleteEventRequest(user_id_clicked, event_id_clicked) {
         user_id: user_id_clicked,
         event_id: event_id_clicked},
     success: function(response) {
-        if (response.success != null && response.success == true)
+        if (response.success !== null && response.success == true)
             location.reload();
         else
             alert(response.message);
@@ -347,7 +347,7 @@ async function fetchUsersJSON(type, status, country, city ,manager=null, role=nu
 
 function deleteNotification(){
   var notification = document.getElementById("notification");
-  if (notification != null) {
+  if (notification !== null) {
     notification.remove();
   }
 }
@@ -815,7 +815,7 @@ if (false){
     columns.appendChild(select_user);
   }
 
-  if (roster_types != null) {
+  if (roster_types !== null) {
     var select_roster_type = creatDropDownSelectField(name, 
                                               "Roster Type",
                                               roster_types.names,
@@ -826,7 +826,7 @@ if (false){
     columns1.appendChild(column);
   }
 
-  if (user_types != null){
+  if (user_types !== null){
     var select_status = creatDropDownSelectField(name, 
                                                 "User Type",
                                                 user_types.names,
@@ -838,7 +838,7 @@ if (false){
   }
 
   // get counties
-  if (countries != null){
+  if (countries !== null){
     var select_country = creatDropDownSelectField(name, 
                                               "Country",
                                               countries.names,
@@ -850,7 +850,7 @@ if (false){
   }
 
   // get departments
-  if (departments != null){
+  if (departments !== null){
     var select_department = creatDropDownSelectField(name, 
                                               "Department",
                                               departments.names,
@@ -863,7 +863,7 @@ if (false){
 
 
   // get workgroups
-  if (workgroups != null){
+  if (workgroups !== null){
     var select_workgroup = creatDropDownSelectField(name, 
                                                     "Workgroup",
                                                     workgroups.names,
@@ -876,7 +876,7 @@ if (false){
 
 
   // get roles
-  if (roles != null) {
+  if (roles !== null) {
     var select_role = creatDropDownSelectField(name, 
                                               "Role",
                                               roles.names,
@@ -887,7 +887,7 @@ if (false){
     columns3.appendChild(column);
   }
 
-  if (companies != null) {
+  if (companies !== null) {
     var select_company = creatDropDownSelectField(name, 
                                               "Company",
                                               companies.names,
@@ -1172,13 +1172,13 @@ function populateRosterRow(row, user, type, result, days_owed, days_owed_actual,
     var numDays = daysInMonth(current_month, current_year);
 
 
-    if (days_owed != null) {
+    if (days_owed !== null) {
         $('<th  user-id="' + user.id + '">' + days_owed   + "</th>").appendTo(row);
     } else {
         $('<th>' + 'X' + '</th>').appendTo(row);
     }
 
-    if (days_owed_actual != null) {
+    if (days_owed_actual !== null) {
         $('<th>' + days_owed_actual   + "</th>").appendTo(row);
     } else {
         $('<th>' + 'X' + '</th>').appendTo(row);
@@ -1348,7 +1348,7 @@ function createUserRoster(
   var table_body = document.getElementById("table_body_" + name);
   
   var user = result.user;
-  if (user == null) {
+  if (user === null) {
     return;
   }
   var user_id = user.id;
@@ -1365,7 +1365,7 @@ function createUserRoster(
   name_cell.appendChild(link_to_user);
   var offset = 0;
 
-  if (potential_roster != null) {
+  if (potential_roster !== null) {
     
     var row_potential = document.createElement("tr");
     row_potential.setAttribute("id", "row_potential_" + user_id);
@@ -1389,7 +1389,7 @@ function createUserRoster(
     table_body.appendChild(row_planned);
     
 
-    if (potential_roster == null && roster_type == "All") {
+    if (potential_roster === null && roster_type == "All") {
       name_cell.setAttribute("rowspan", "1");
       row_planned.appendChild(name_cell);
     } else if (roster_type == "planned") {
@@ -1398,7 +1398,7 @@ function createUserRoster(
     }
 
     populateRosterRow(row_planned, user, "planned", result.planned_events, days_owed_planned, days_owed_actual, month, year, createModal, name, offset, last_row);
-    if (potential_roster == null && roster_type == "All") {
+    if (potential_roster === null && roster_type == "All") {
       offset = 1;
     }
   }
@@ -1411,7 +1411,7 @@ function filterUsers(users){
   var add = true;
 
 
-  if (users == null || users.length == 0) {
+  if (users === null || users.length == 0) {
     return filtered;
   }
 
@@ -1547,7 +1547,7 @@ async function getUsersEvents(users) {
 
 function matchEventToUser(user, events) {
   var result = {};
-  if (user == null || events == null) {
+  if (user === null || events === null) {
     return result;
   }
   for (var j = 0; j < events.length; j++) {
@@ -1680,7 +1680,7 @@ function populateFlightChangeDiv(event, user_id, year, month, date, name){
   var confirm_checkbox = document.getElementById("request_roster_confirm_booking_personal_roster");
 
   var button_hidden = document.getElementById("hidden_btn_potential_roster");
-  if (event.origin != null && event.destination != null) {
+  if (event.origin !== null && event.destination !== null) {
           from_field.value = event.origin;
           to_field.value = event.destination;
   } else {
@@ -1741,14 +1741,14 @@ function openNewEventModal(user_id, year, month, date, name, cell, all_events){
   var event_id = null;
 
 
-  if (event_span != null){
+  if (event_span !== null){
     event_id = event_span.getAttribute('event_id');
   }
 
   if (cell.getAttribute('flight_id') != -1) {
     event_id = cell.getAttribute('flight_id');  
     var event = getEventByIdFromList(event_id, all_events);
-    if (event.eticket_id != null) {
+    if (event.eticket_id !== null) {
       let tab = document.getElementById("travel_request_section");
       tab.classList.add("is-hidden");
     } else {
