@@ -131,7 +131,7 @@ function getEventByIdFromList(id, events) {
   return null;
 }
 
-function getPotentialEventsJSON(user_id, event_id, new_start, is_projected) {
+function getPotentialEventsJSON(user_id, event_id, new_start, is_projected, is_review = false) {
 
   potential_events = [];
   potential_days_owed = 0;
@@ -139,7 +139,8 @@ function getPotentialEventsJSON(user_id, event_id, new_start, is_projected) {
     user_id: user_id,
     event_id: event_id,
     new_start: new_start,
-    is_projected: is_projected
+    is_projected: is_projected,
+    is_review: is_review
   });
 
 
@@ -149,7 +150,7 @@ function getPotentialEventsJSON(user_id, event_id, new_start, is_projected) {
       var response = JSON.parse(this.responseText);
       deleteNotification();
       if (response.data['success'] != null && response.data['success'] == false) {
-        createNotification(response.data['message'], response.data['type']);
+        // createNotification(response.data['message'], response.data['type']);
         console.log(response.data);
       }
       potential_events = response.data['events'];
