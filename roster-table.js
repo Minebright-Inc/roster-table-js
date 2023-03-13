@@ -91,7 +91,6 @@ function getWorgroupUsers(users){
   };
   http.open('POST', "/get_workgroup_mates/", false);
   http.setRequestHeader("Content-type", "application/json; charset=utf-8");
-  // http.setRequestHeader("Content-length", params.length);
   http.send(params);
 }
 
@@ -356,6 +355,8 @@ function createNotification(message, type) {
     var notification = document.createElement("div");
     var notification_btn = document.createElement("button");
     var box = document.getElementById('new_event_modal_notification');
+    if (box == null)
+        return;
     notification_btn.classList.add("delete");
     notification.setAttribute("id", "notification");
     notification.appendChild(notification_btn);
@@ -775,31 +776,73 @@ function registerSelectChange(name, users, createFilter, createModal, is_potenti
  */
 
 async function createFilters(name, users, createFilter, createModal, is_potential_roster, is_review, countries, workgroups, departments, roles, roster_types, user_types, companies) {
-  var container = document.getElementById(name);
+    var container = document.getElementById(name);
   
-  var box = document.createElement("div");
-  box.classList.add("box");
-  var columns = document.createElement('div');
-  columns.classList.add('field-body');
+    var box = document.createElement("div");
+    box.classList.add("columns");
 
-  var columns0 = document.createElement('div');
-  columns0.classList.add('field-body');
+    var box_column = document.createElement("div");
+    box_column.classList.add("column");
 
-  var columns1 = document.createElement('div');
-  columns1.classList.add('field-body');
-
-  var columns2 = document.createElement('div');
-  columns2.classList.add('field-body');
-
-  var columns3 = document.createElement('div');
-  columns3.classList.add('field-body');
-
-  var columns4 = document.createElement('div');
-  columns4.classList.add('field-body');
+    box.appendChild(box_column);
 
 
-  var columns5 = document.createElement('div');
-  columns5.classList.add('field-body');
+  
+
+    var card = document.createElement("div");
+    card.classList.add("card");
+
+    var card_header = document.createElement("header");
+    card_header.classList.add("card-header");
+    card_header.setAttribute("style", "margin: 0px 0px 0px 0px;");
+
+    var card_header_title = document.createElement("p");
+    card_header_title.classList.add("card-header-title", "mb-0", "has-text-centered");
+    card_header_title.innerHTML = "<span class=icon-text'>\
+                                        <span class='icon'>\
+                                            <i class='fa-solid fa-magnifying-glass'></i>\
+                                        </span>\
+                                    <span class='is-size-5'>Filters</span>";
+    
+    var card_header_icon = document.createElement("span");
+    card_header_icon.classList.add("card-header-icon", "card-toggle", "icon", 'is-large', 'is-pulled-right');
+    card_header_icon.innerHTML = '<i class="fa-solid fa-plus"></i>';
+
+
+    card_header.appendChild(card_header_title);
+    card_header.appendChild(card_header_icon);
+
+    var card_content = document.createElement("div");
+    card_content.classList.add("card-content", 'is-hidden');
+
+
+
+    card.appendChild(card_header);
+    card.appendChild(card_content);
+
+    
+
+    var columns = document.createElement('div');
+    columns.classList.add('field-body');
+
+    var columns0 = document.createElement('div');
+    columns0.classList.add('field-body');
+
+    var columns1 = document.createElement('div');
+    columns1.classList.add('field-body');
+
+    var columns2 = document.createElement('div');
+    columns2.classList.add('field-body');
+
+    var columns3 = document.createElement('div');
+    columns3.classList.add('field-body');
+
+    var columns4 = document.createElement('div');
+    columns4.classList.add('field-body');
+
+
+    var columns5 = document.createElement('div');
+    columns5.classList.add('field-body');
 
 
   //   var select_month = creatDropDownSelectField(name,
@@ -941,14 +984,14 @@ if (false){
   column.appendChild(search_field_control);
   columns5.appendChild(column);
 
-  box.appendChild(columns);
-  box.appendChild(columns1);
-  box.appendChild(columns2);
-  box.appendChild(columns3);
-  box.appendChild(columns4);
-  box.appendChild(columns5);
+  card_content.appendChild(columns);
+  card_content.appendChild(columns1);
+  card_content.appendChild(columns2);
+  card_content.appendChild(columns3);
+  card_content.appendChild(columns4);
+  card_content.appendChild(columns5);
   
-
+  box_column.appendChild(card);
   container.appendChild(box);
 
   registerSelectChange(name, users, createFilter, createModal, is_potential_roster, is_review);
@@ -2742,6 +2785,15 @@ function createCalendar(name,
   populateTableHeader(name);
 
   $('td, th').addClass('is-size-7');
+
+  $('.card-toggle').on('click',function() {
+    if ( $(this).closest('.card').find('.card-content').hasClass('is-hidden')){
+        $(this).find('i').removeClass('fa-plus').addClass('fa-minus');
+    } else {
+        $(this).find('i').removeClass('fa-minus').addClass('fa-plus');
+    }
+    $(this).closest('.card').find('.card-content').toggleClass('is-hidden');
+});
 
 }
 
