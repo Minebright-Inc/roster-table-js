@@ -87,7 +87,6 @@ function getWorgroupUsers (users) {
   }
   http.open('POST', '/get_workgroup_mates/', false)
   http.setRequestHeader('Content-type', 'application/json; charset=utf-8')
-  // http.setRequestHeader("Content-length", params.length);
   http.send(params)
 }
 
@@ -149,6 +148,7 @@ function getPotentialEventsJSON (
       const response = JSON.parse(this.responseText)
       deleteNotification()
       if (response.data.success !== null && response.data.success == false) {
+
         // createNotification(response.data['message'], response.data['type']);
         console.log(response.data)
       }
@@ -364,6 +364,7 @@ function createNotification (message, type) {
   const notification = document.createElement('div')
   const notification_btn = document.createElement('button')
   const box = document.getElementById('new_event_modal_notification')
+  if (box == null) return
   notification_btn.classList.add('delete')
   notification.setAttribute('id', 'notification')
   notification.appendChild(notification_btn)
@@ -867,7 +868,53 @@ async function createFilters (
   const container = document.getElementById(name)
 
   const box = document.createElement('div')
-  box.classList.add('box')
+
+  box.classList.add('columns')
+
+  const box_column = document.createElement('div')
+  box_column.classList.add('column')
+
+  box.appendChild(box_column)
+
+  const card = document.createElement('div')
+  card.classList.add('card')
+
+  const card_header = document.createElement('header')
+  card_header.classList.add('card-header')
+  card_header.setAttribute('style', 'margin: 0px 0px 0px 0px;')
+
+  const card_header_title = document.createElement('p')
+  card_header_title.classList.add(
+    'card-header-title',
+    'mb-0',
+    'has-text-centered'
+  )
+  card_header_title.innerHTML =
+    "<span class=icon-text'>\
+                                        <span class='icon'>\
+                                            <i class='fa-solid fa-magnifying-glass'></i>\
+                                        </span>\
+                                    <span class='is-size-5'>Filters</span>"
+
+  const card_header_icon = document.createElement('span')
+  card_header_icon.classList.add(
+    'card-header-icon',
+    'card-toggle',
+    'icon',
+    'is-large',
+    'is-pulled-right'
+  )
+  card_header_icon.innerHTML = '<i class="fa-solid fa-plus"></i>'
+
+  card_header.appendChild(card_header_title)
+  card_header.appendChild(card_header_icon)
+
+  const card_content = document.createElement('div')
+  card_content.classList.add('card-content', 'is-hidden')
+
+  card.appendChild(card_header)
+  card.appendChild(card_content)
+
   const columns = document.createElement('div')
   columns.classList.add('field-body')
 
@@ -913,6 +960,7 @@ async function createFilters (
   }
 
   if (user_types !== null) {
+
     const select_status = creatDropDownSelectField(
       name,
       'User Type',
@@ -927,6 +975,7 @@ async function createFilters (
 
   // get counties
   if (countries !== null) {
+
     const select_country = creatDropDownSelectField(
       name,
       'Country',
@@ -941,6 +990,7 @@ async function createFilters (
 
   // get departments
   if (departments !== null) {
+
     const select_department = creatDropDownSelectField(
       name,
       'Department',
@@ -955,6 +1005,7 @@ async function createFilters (
 
   // get workgroups
   if (workgroups !== null) {
+
     const select_workgroup = creatDropDownSelectField(
       name,
       'Workgroup',
@@ -969,6 +1020,7 @@ async function createFilters (
 
   // get roles
   if (roles !== null) {
+
     const select_role = creatDropDownSelectField(
       name,
       'Role',
@@ -982,6 +1034,7 @@ async function createFilters (
   }
 
   if (companies !== null) {
+
     const select_company = creatDropDownSelectField(
       name,
       'Company',
@@ -1043,13 +1096,15 @@ async function createFilters (
   column.appendChild(search_field_control)
   columns5.appendChild(column)
 
-  box.appendChild(columns)
-  box.appendChild(columns1)
-  box.appendChild(columns2)
-  box.appendChild(columns3)
-  box.appendChild(columns4)
-  box.appendChild(columns5)
 
+  card_content.appendChild(columns)
+  card_content.appendChild(columns1)
+  card_content.appendChild(columns2)
+  card_content.appendChild(columns3)
+  card_content.appendChild(columns4)
+  card_content.appendChild(columns5)
+
+  box_column.appendChild(card)
   container.appendChild(box)
 
   registerSelectChange(
@@ -1205,9 +1260,9 @@ function createLabel (name, columns) {
   column.className = 'column'
   columns.appendChild(column)
 
+
   const text = document.createElement('p')
   text.classList.add('title')
-
   text.classList.add('is-3')
   text
 
@@ -1319,7 +1374,6 @@ function createCell (
           $(this).attr('data-num-events')
       )
     })
-  }
 
   return $x
 }
@@ -1348,13 +1402,13 @@ function populateRosterRow (
 ) {
   const numDays = daysInMonth(current_month, current_year)
 
-  if (days_owed !== null) {
+  if (days_owed != null) {
     $('<th  user-id="' + user.id + '">' + days_owed + '</th>').appendTo(row)
   } else {
     $('<th>' + 'X' + '</th>').appendTo(row)
   }
 
-  if (days_owed_actual !== null) {
+  if (days_owed_actual != null) {
     $('<th>' + days_owed_actual + '</th>').appendTo(row)
   } else {
     $('<th>' + 'X' + '</th>').appendTo(row)
@@ -1594,8 +1648,8 @@ function createUserRoster (
   var createModal = createModal
   const table_body = document.getElementById('table_body_' + name)
 
-  const user = result.user
-  if (user === null) {
+  const user = result.user  if (user === null) {
+
     return
   }
   const user_id = user.id
@@ -1619,6 +1673,7 @@ function createUserRoster (
   let offset = 0
 
   if (potential_roster !== null) {
+
     const row_potential = document.createElement('tr')
     row_potential.setAttribute('id', 'row_potential_' + user_id)
     row_potential.setAttribute('style', 'height: 60px;')
@@ -1652,6 +1707,7 @@ function createUserRoster (
     table_body.appendChild(row_planned)
 
     if (potential_roster === null && roster_type == 'All') {
+
       name_cell.setAttribute('rowspan', '1')
       row_planned.appendChild(name_cell)
     } else if (roster_type == 'planned') {
@@ -3108,6 +3164,9 @@ function createNewEventModal (
     potential_roster_name
   )
   modal_card_body.appendChild(div_travel)
+ deleteNotification()
+    resetTravelrequestsateVars()
+  })
 
   modal_card_header.appendChild(modal_card_header_title)
   modal_card_header.appendChild(delete_button)
@@ -3234,6 +3293,14 @@ function createCalendar (
     )
   }
   populateTableHeader(name)
-
   $('td, th').addClass('is-size-7')
+
+  $('.card-toggle').on('click', function () {
+    if ($(this).closest('.card').find('.card-content').hasClass('is-hidden')) {
+      $(this).find('i').removeClass('fa-plus').addClass('fa-minus')
+    } else {
+      $(this).find('i').removeClass('fa-minus').addClass('fa-plus')
+    }
+    $(this).closest('.card').find('.card-content').toggleClass('is-hidden')
+  })
 }
