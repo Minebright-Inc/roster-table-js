@@ -76,7 +76,7 @@ function getWorgroupUsers (users) {
   http.onload = function () {
     if (this.readyState == 4 && this.status == 200) {
       const response = JSON.parse(this.responseText)
-      if (response.data != null) {
+      if (response.data !== null) {
         workgroup_mates = response.data
         console.log(response.data)
       } else {
@@ -147,7 +147,8 @@ function getPotentialEventsJSON (
     if (this.readyState == 4 && this.status == 200) {
       const response = JSON.parse(this.responseText)
       deleteNotification()
-      if (response.data.success != null && response.data.success == false) {
+      if (response.data.success !== null && response.data.success == false) {
+
         // createNotification(response.data['message'], response.data['type']);
         console.log(response.data)
       }
@@ -156,7 +157,7 @@ function getPotentialEventsJSON (
       const e = document.getElementById(
         'request_roster_project_personal_roster'
       )
-      if (e != null) {
+      if (e !== null) {
         e.checked = response.data.is_projected
       }
       console.log(response.data)
@@ -196,7 +197,7 @@ function postRosterChangeRequest (
     if (this.readyState == 4 && this.status == 200) {
       const response = JSON.parse(this.responseText)
       deleteNotification()
-      if (response.success != null && response.success == false) {
+      if (response.success !== null && response.success == false) {
         createNotification(response.message, response.type)
         console.log(response)
       } else {
@@ -245,7 +246,7 @@ function postNewEventRequest (
     },
     success: function (response) {
       deleteNotification()
-      if (response.success != null && response.success == false) {
+      if (response.success !== null && response.success == false) {
         createNotification(response.message, response.type)
         console.log(response)
       } else {
@@ -266,7 +267,7 @@ function DeleteEventRequest (user_id_clicked, event_id_clicked) {
       event_id: event_id_clicked
     },
     success: function (response) {
-      if (response.success != null && response.success == true) {
+      if (response.success !== null && response.success == true) {
         location.reload()
       } else alert(response.message)
     }
@@ -354,7 +355,7 @@ async function fetchUsersJSON (
 
 function deleteNotification () {
   const notification = document.getElementById('notification')
-  if (notification != null) {
+  if (notification !== null) {
     notification.remove()
   }
 }
@@ -867,6 +868,7 @@ async function createFilters (
   const container = document.getElementById(name)
 
   const box = document.createElement('div')
+
   box.classList.add('columns')
 
   const box_column = document.createElement('div')
@@ -944,7 +946,7 @@ async function createFilters (
     columns.appendChild(select_user)
   }
 
-  if (roster_types != null) {
+  if (roster_types !== null) {
     const select_roster_type = creatDropDownSelectField(
       name,
       'Roster Type',
@@ -957,7 +959,8 @@ async function createFilters (
     columns1.appendChild(column)
   }
 
-  if (user_types != null) {
+  if (user_types !== null) {
+
     const select_status = creatDropDownSelectField(
       name,
       'User Type',
@@ -971,7 +974,8 @@ async function createFilters (
   }
 
   // get counties
-  if (countries != null) {
+  if (countries !== null) {
+
     const select_country = creatDropDownSelectField(
       name,
       'Country',
@@ -985,7 +989,8 @@ async function createFilters (
   }
 
   // get departments
-  if (departments != null) {
+  if (departments !== null) {
+
     const select_department = creatDropDownSelectField(
       name,
       'Department',
@@ -999,7 +1004,8 @@ async function createFilters (
   }
 
   // get workgroups
-  if (workgroups != null) {
+  if (workgroups !== null) {
+
     const select_workgroup = creatDropDownSelectField(
       name,
       'Workgroup',
@@ -1013,7 +1019,8 @@ async function createFilters (
   }
 
   // get roles
-  if (roles != null) {
+  if (roles !== null) {
+
     const select_role = creatDropDownSelectField(
       name,
       'Role',
@@ -1026,7 +1033,8 @@ async function createFilters (
     columns3.appendChild(column)
   }
 
-  if (companies != null) {
+  if (companies !== null) {
+
     const select_company = creatDropDownSelectField(
       name,
       'Company',
@@ -1087,6 +1095,7 @@ async function createFilters (
   search_field_control.appendChild(search_icon)
   column.appendChild(search_field_control)
   columns5.appendChild(column)
+
 
   card_content.appendChild(columns)
   card_content.appendChild(columns1)
@@ -1251,9 +1260,9 @@ function createLabel (name, columns) {
   column.className = 'column'
   columns.appendChild(column)
 
+
   const text = document.createElement('p')
   text.classList.add('title')
-
   text.classList.add('is-3')
   text
 
@@ -1365,7 +1374,6 @@ function createCell (
           $(this).attr('data-num-events')
       )
     })
-  }
 
   return $x
 }
@@ -1640,8 +1648,8 @@ function createUserRoster (
   var createModal = createModal
   const table_body = document.getElementById('table_body_' + name)
 
-  const user = result.user
-  if (user == null) {
+  const user = result.user  if (user === null) {
+
     return
   }
   const user_id = user.id
@@ -1664,7 +1672,8 @@ function createUserRoster (
   name_cell.appendChild(link_to_user)
   let offset = 0
 
-  if (potential_roster != null) {
+  if (potential_roster !== null) {
+
     const row_potential = document.createElement('tr')
     row_potential.setAttribute('id', 'row_potential_' + user_id)
     row_potential.setAttribute('style', 'height: 60px;')
@@ -1697,7 +1706,8 @@ function createUserRoster (
     row_planned.setAttribute('style', 'height: 60px;')
     table_body.appendChild(row_planned)
 
-    if (potential_roster == null && roster_type == 'All') {
+    if (potential_roster === null && roster_type == 'All') {
+
       name_cell.setAttribute('rowspan', '1')
       row_planned.appendChild(name_cell)
     } else if (roster_type == 'planned') {
@@ -1719,7 +1729,7 @@ function createUserRoster (
       offset,
       last_row
     )
-    if (potential_roster == null && roster_type == 'All') {
+    if (potential_roster === null && roster_type == 'All') {
       offset = 1
     }
   }
@@ -1729,7 +1739,7 @@ function filterUsers (users) {
   const filtered = []
   let add = true
 
-  if (users == null || users.length == 0) {
+  if (users === null || users.length == 0) {
     return filtered
   }
 
@@ -1865,7 +1875,7 @@ async function getUsersEvents (users) {
 
 function matchEventToUser (user, events) {
   let result = {}
-  if (user == null || events == null) {
+  if (user === null || events === null) {
     return result
   }
   for (let j = 0; j < events.length; j++) {
@@ -2004,7 +2014,7 @@ function populateFlightChangeDiv (event, user_id, year, month, date, name) {
   )
 
   const button_hidden = document.getElementById('hidden_btn_potential_roster')
-  if (event.origin != null && event.destination != null) {
+  if (event.origin !== null && event.destination !== null) {
     from_field.value = event.origin
     to_field.value = event.destination
   } else {
@@ -2071,14 +2081,14 @@ function openNewEventModal (user_id, year, month, date, name, cell, all_events) 
   const event_span = cell.firstChild
   let event_id = null
 
-  if (event_span != null) {
+  if (event_span !== null) {
     event_id = event_span.getAttribute('event_id')
   }
 
   if (cell.getAttribute('flight_id') != -1) {
     event_id = cell.getAttribute('flight_id')
     const event = getEventByIdFromList(event_id, all_events)
-    if (event.eticket_id != null) {
+    if (event.eticket_id !== null) {
       const tab = document.getElementById('travel_request_section')
       tab.classList.add('is-hidden')
     } else {
@@ -3154,6 +3164,9 @@ function createNewEventModal (
     potential_roster_name
   )
   modal_card_body.appendChild(div_travel)
+ deleteNotification()
+    resetTravelrequestsateVars()
+  })
 
   modal_card_header.appendChild(modal_card_header_title)
   modal_card_header.appendChild(delete_button)
@@ -3280,7 +3293,6 @@ function createCalendar (
     )
   }
   populateTableHeader(name)
-
   $('td, th').addClass('is-size-7')
 
   $('.card-toggle').on('click', function () {
