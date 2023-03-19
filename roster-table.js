@@ -154,7 +154,7 @@ function getPotentialEventsJSON(user_id, event_id, new_start, is_projected, is_r
       }
       potential_events = response.data['events'];
       potential_days_owed = response.data['days_owed'];
-      var e = document.getElementById("request_roster_project_personal_roster");
+      var e = document.getElementById("request_roster_project_workgroup_rosters");
       if (e != null) {
         e.checked = response.data['is_projected'];
       }
@@ -793,7 +793,7 @@ async function createFilters(name, users, createFilter, createModal, is_potentia
     card.classList.add("card");
 
     var card_header = document.createElement("header");
-    card_header.classList.add("card-header");
+    card_header.classList.add("card-header", "card-toggle-roster");
     card_header.setAttribute("style", "margin: 0px 0px 0px 0px;");
 
     var card_header_title = document.createElement("p");
@@ -805,7 +805,7 @@ async function createFilters(name, users, createFilter, createModal, is_potentia
                                     <span class='is-size-5'>Filters</span>";
     
     var card_header_icon = document.createElement("span");
-    card_header_icon.classList.add("card-header-icon", "card-toggle", "icon", 'is-large', 'is-pulled-right');
+    card_header_icon.classList.add("card-header-icon", "icon", 'is-large', 'is-pulled-right');
     card_header_icon.innerHTML = '<i class="fa-solid fa-plus"></i>';
 
 
@@ -1138,67 +1138,6 @@ function setLabels(name) {
     current_year;
 }
 
-function createCell(d, today, year, month, last_roster, createModal, type, user, result) {
-    var $x = $('<td>', {
-      class: 'has-text-centered'
-    });
-  
-    if (today.getFullYear() == year && today.getMonth() == month && today.getDate() == d) {
-      if (last_roster) {
-        $x.css({
-          "padding": "0",
-          "margin": "0",
-          "min-height": "50px",
-          "width": "25px",
-          "border-right": "2px solid",
-          "border-left": "2px solid",
-          "border-bottom": "2px solid"
-        });
-      } else {
-        $x.css({
-          "padding": "0",
-          "margin": "0",
-          "min-height": "50px",
-          "width": "25px",
-          "border-right": "2px solid",
-          "border-left": "2px solid"
-        });
-      }
-    } else {
-      $x.css({
-        "padding": "0",
-        "margin": "0",
-        "min-height": "50px",
-        "width": "25px"
-      });
-    }
-
-    if (createModal == true && type == 'planned') {
-        $x.addClass('eventCell');
-        $x.attr({
-          'data-user-id': user.id,
-          'data-year': year,
-          'data-month': month,
-          'data-date': d,
-          'data-name': name,
-          'data-num-events': 0,
-          'flight_id': -1
-        });
-    
-        $x.on('click', function() {
-          var user_id = $(this).attr('data-user-id');
-          var year = $(this).attr('data-year');
-          var month = $(this).attr('data-month');
-          var date = $(this).attr('data-date');
-          var name = $(this).attr('data-name');
-          deleteNotification();
-          openNewEventModal(user_id, year, month, date, name, this, result);
-          console.log('data-id: ' + $(this).attr('data-date') + ' num-events: ' + $(this).attr('data-num-events'));
-        });
-      }
-    
-      return $x;
-    }
 
 function pickTextColorBasedOnBgColorSimple(bgColor, lightColor, darkColor) {
     var color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
@@ -1712,29 +1651,30 @@ function populateDeleteEventDiv(cell, all_events, name){
 
 function populateFlightChangeDiv(event, user_id, year, month, date, name){
 
-  let user = getUserFromList(user_id);
-  var start_select = document.getElementById("request_roster_change_personal_roster");  
-  let date_obj = new Date(year, month, date);
-  start_select.value =  date_obj.toISOString().slice(0, 10);
+    let user = getUserFromList(user_id);
+    var start_select = document.getElementById("request_roster_change_workgroup_rosters");  
+    let date_obj = new Date(year, month, date);
+    start_select.value =  date_obj.toISOString().slice(0, 10);
 
-  var from_field = document.getElementById("request_roster_change_from_personal_roster");
-  var to_field = document.getElementById("request_roster_change_to_personal_roster");
+    var from_field = document.getElementById("request_roster_change_from_workgroup_rosters");
+    var to_field = document.getElementById("request_roster_change_to_workgroup_rosters");
 
-  var confirm_checkbox = document.getElementById("request_roster_confirm_booking_personal_roster");
-
-  var button_hidden = document.getElementById("hidden_btn_potential_roster");
-  if (event.origin != null && event.destination != null) {
-          from_field.value = event.origin;
-          to_field.value = event.destination;
-  } else {
-          if (event.is_inbound == true) {
-                  from_field.value = user.home_port;
-                  to_field.value = user.site;
-          } else {
-                  from_field.value = user.site;
-                  to_field.value = user.home_port;
-          }
-  }
+    var confirm_checkbox = document.getElementById("request_roster_confirm_booking_workgroup_rosters");
+    var project_checkbox = document.getElementById("request_roster_project_workgroup_rosters");
+    project_checkbox.checked = false;
+    var button_hidden = document.getElementById("hidden_btn_potential_roster");
+    if (event.origin != null && event.destination != null) {
+        from_field.value = event.origin;
+        to_field.value = event.destination;
+    } else {
+        if (event.is_inbound == true) {
+                from_field.value = user.home_port;
+                to_field.value = user.site;
+        } else {
+                from_field.value = user.site;
+                to_field.value = user.home_port;
+        }
+    }
 
 
   button_hidden.click();
@@ -1774,14 +1714,41 @@ function populateAdhocWarning(type, warning_text){
 }
 
 
-function openNewEventModal(user_id, year, month, date, name, cell, all_events){
+function openNewEventModal(user_id, year, month, date, name, cell=null, all_events=null, flight_id=null){
   // Open up the modal
   var modal = document.getElementById("new_event_modal_"+name);
   modal.classList.add("is-active");
   let new_event_tab = document.getElementById("new_event_modal_create_section");
-  new_event_tab.click();  
-  var event_span = cell.firstChild;
+  let delete_event_tab = document.getElementById("new_event_modal_delete_section");
+  let flight_change_tab = document.getElementById("travel_request_section");
+  var event_span = null;
   var event_id = null;
+
+    if (flight_id != null) {
+        event_id = flight_id;
+        setTravelrequestsateVars(user_id, event_id);
+        flight_change_tab.firstChild.click();
+        new_event_tab.classList.add("is-hidden");
+        delete_event_tab.classList.add("is-hidden");
+        $.ajax({
+            url: "/api/events/" + event_id,
+            type: "GET",
+            success: function (data) {
+                var event = data;
+                populateFlightChangeDiv(event, user_id, year, month, date, name);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+        return;
+    } else {
+        new_event_tab.classList.remove("is-hidden");
+        delete_event_tab.classList.remove("is-hidden");
+        event_span = cell.firstChild;
+    }
+
+  new_event_tab.click();
 
 
   if (event_span != null){
@@ -1792,13 +1759,11 @@ function openNewEventModal(user_id, year, month, date, name, cell, all_events){
     event_id = cell.getAttribute('flight_id');  
     var event = getEventByIdFromList(event_id, all_events);
     if (event.eticket_id != null) {
-      let tab = document.getElementById("travel_request_section");
-      tab.classList.add("is-hidden");
+        flight_change_tab.classList.add("is-hidden");
     } else {
       // Expose the tab
-      let tab = document.getElementById("travel_request_section");
-      tab.classList.remove("is-hidden");
-      tab.firstChild.click();
+      flight_change_tab.classList.remove("is-hidden");
+      flight_change_tab.firstChild.click();
       // Change Travel Event Section
       populateFlightChangeDiv(event, user_id, year, month, date, name)
     }
@@ -1816,11 +1781,6 @@ function openNewEventModal(user_id, year, month, date, name, cell, all_events){
   populateDeleteEventDiv(cell, all_events, name);
   //New Event Section
   populateNewEventDiv(user_id, year, month, date, name)
-
-
-  
-
-  
   
 }
 
@@ -2222,7 +2182,7 @@ function createFlightRequestBox(box_name, label_name){
   origin_label.innerText = 'Origin';
   var origin_input = document.createElement('input');
   origin_input.classList.add('input');
-  origin_input.id = 'request_roster_change_from_personal_roster_' + box_name;
+  origin_input.id = 'request_roster_change_from_workgroup_rosters_' + box_name;
   origin_input.type = 'text';
   origin_column.appendChild(origin_label);
   origin_column.appendChild(origin_input);
@@ -2239,7 +2199,7 @@ function createFlightRequestBox(box_name, label_name){
   destination_label.innerText = 'Destination';
   var destination_input = document.createElement('input');
   destination_input.classList.add('input');
-  destination_input.id = 'request_roster_change_to_personal_roster_' + box_name;
+  destination_input.id = 'request_roster_change_to_workgroup_rosters_' + box_name;
   destination_input.type = 'text';
   destination_column.appendChild(destination_label);
   destination_column.appendChild(destination_input);
@@ -2314,10 +2274,10 @@ function createModalAdhocSection(div_adhoc, name){
     submit_btn.id = 'request_roster_adhoc_submit';
     submit_btn.addEventListener('click', function(){
         var user_id = this.getAttribute('user_id');
-        var from_field_in = document.getElementById("request_roster_change_from_personal_roster_inbound");
-        var from_field_out = document.getElementById("request_roster_change_from_personal_roster_outbound");
-        var to_field_in = document.getElementById("request_roster_change_to_personal_roster_inbound");
-        var to_field_out = document.getElementById("request_roster_change_to_personal_roster_outbound");
+        var from_field_in = document.getElementById("request_roster_change_from_workgroup_rosters_inbound");
+        var from_field_out = document.getElementById("request_roster_change_from_workgroup_rosters_outbound");
+        var to_field_in = document.getElementById("request_roster_change_to_workgroup_rosters_inbound");
+        var to_field_out = document.getElementById("request_roster_change_to_workgroup_rosters_outbound");
         var from_date_in = document.getElementById("request_roster_change_departure_date_inbound");
         var from_date_out = document.getElementById("request_roster_change_departure_date_outbound");
         var warning_box = document.getElementById("request_roster_adhoc_warning");
@@ -2786,13 +2746,17 @@ function createCalendar(name,
 
   $('td, th').addClass('is-size-7');
 
-  $('.card-toggle').on('click',function() {
+  $('.card-toggle-roster').on('click',function() {
+    var card = $(this).closest('.card');
     if ( $(this).closest('.card').find('.card-content').hasClass('is-hidden')){
-        $(this).find('i').removeClass('fa-plus').addClass('fa-minus');
+        $(this).find('i.fa-plus').removeClass('fa-plus').addClass('fa-minus');
+        card.addClass('has-border-link ')
     } else {
-        $(this).find('i').removeClass('fa-minus').addClass('fa-plus');
+        $(this).find('i.fa-minus').removeClass('fa-minus').addClass('fa-plus');
+        card.removeClass('has-border-link ')
     }
     $(this).closest('.card').find('.card-content').toggleClass('is-hidden');
+    return;
 });
 
 }
